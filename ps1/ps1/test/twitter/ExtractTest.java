@@ -14,9 +14,6 @@ import org.junit.Test;
 public class ExtractTest {
 
     /*
-     * TODO: your testing strategies for these methods should go here.
-     * See the ic03-testing exercise for examples of what a testing strategy comment looks like.
-     * Make sure you have partitions.
      * 
      * getTimespan testing strategy:
      * Partition by:
@@ -24,6 +21,7 @@ public class ExtractTest {
      * All tweets have the same timestamp, at least two tweets at different times
      * 
      * getMentionedUsers testing strategy:
+     * Partition by:
      * tweets list size: 1, > 1
      * mentioned users: 0, 1, > 1
      */
