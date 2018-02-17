@@ -3,8 +3,15 @@
  */
 package twitter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -41,7 +48,14 @@ public class SocialNetwork {
      *         either authors or @-mentions in the list of tweets.
      */
     public static Map<String, Set<String>> guessFollowsGraph(List<Tweet> tweets) {
-        throw new RuntimeException("not implemented");
+        Map<String, Set<String>> graph = new HashMap<>();
+        for (Tweet tweet : tweets) {
+            Set<String> follows = new HashSet<>();
+            follows.addAll(Extract.getMentionedUsers(Arrays.asList(tweet)));
+            graph.put(tweet.getAuthor().toLowerCase(), follows);
+        }
+        
+        return graph;
     }
 
     /**
@@ -54,7 +68,36 @@ public class SocialNetwork {
      *         descending order of follower count.
      */
     public static List<String> influencers(Map<String, Set<String>> followsGraph) {
-        throw new RuntimeException("not implemented");
+        List<String> result = new ArrayList<>();
+        Map<String, Integer> countsMap = new HashMap<>();
+        for (Map.Entry<String, Set<String>> entry : followsGraph.entrySet()) {
+            if (!countsMap.containsKey(entry.getKey())) {
+                countsMap.put(entry.getKey(), 0);
+            }
+            for (String username : entry.getValue()) {
+                if (!countsMap.containsKey(username)) {
+                    countsMap.put(username, 0);
+                }
+                countsMap.put(username, countsMap.get(username) + 1);
+            }
+        }
+        
+        List<Map.Entry<String, Integer>> countsList = new ArrayList<>(countsMap.entrySet());
+        Collections.sort(countsList, new Comparator<Map.Entry<String, Integer>>() {
+
+            @Override
+            public int compare(Entry<String, Integer> e1, Entry<String, Integer> e2) {
+                return e2.getValue() - e1.getValue();
+            }
+        });
+        
+        for (Map.Entry<String, Integer> count : countsList) {
+            result.add(count.getKey());
+        }
+        
+        return result;
     }
+    
+    
 
 }
