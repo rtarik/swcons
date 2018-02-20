@@ -63,7 +63,7 @@ public abstract class GraphInstanceTest {
         Graph<String> graph = emptyInstance();
         assertTrue("expected graph to not contain the vertex", graph.add("a"));
         assertFalse("expected graph to contain the vertex", graph.add("a"));
-        assertEquals("expected graph to contain one vertex", 1, graph.vertices());
+        assertEquals("expected graph to contain one vertex", 1, graph.vertices().size());
         
     }
     
