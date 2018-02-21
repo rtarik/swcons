@@ -3,8 +3,11 @@
  */
 package poet;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
 
 import graph.Graph;
 
@@ -55,7 +58,7 @@ public class GraphPoet {
     private final Graph<String> graph = Graph.empty();
     
     // Abstraction function:
-    //   TODO
+    //   Affinity graph
     // Representation invariant:
     //   TODO
     // Safety from rep exposure:
@@ -68,7 +71,28 @@ public class GraphPoet {
      * @throws IOException if the corpus file cannot be found or read
      */
     public GraphPoet(File corpus) throws IOException {
-        throw new RuntimeException("not implemented");
+        FileReader reader = new FileReader(corpus);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        String line, lastWord = null, source = null, target = null;
+        String[] words = null;
+        while ((line = bufferedReader.readLine()) != null) {
+            words = line.split("\\s+");
+            for (int i = 0; i < words.length; i++) {
+                if (i == 0 && lastWord != null) {
+                    source = lastWord;
+                    target = words[0];
+                } else if (i > 0) {
+                    source = words[i - 1];
+                    target = words[i];
+                }
+                if (source != null && target != null) {
+                    int weight = graph.set(source.toLowerCase(), target.toLowerCase(), 0);
+                    graph.set(source.toLowerCase(), target.toLowerCase(), weight + 1);
+                }
+            }
+            lastWord = words[words.length - 1];
+        }
+        bufferedReader.close();      
     }
     
     // TODO checkRep
@@ -80,7 +104,44 @@ public class GraphPoet {
      * @return poem (as described above)
      */
     public String poem(String input) {
-        throw new RuntimeException("not implemented");
+        StringBuilder builder = new StringBuilder();
+        String[] words = input.split("\\s+");
+        String first, second;
+        String middle;
+        int maxWeight;
+        builder.append(words[0]);
+
+        for (int i = 0; i < words.length - 1; i++) {
+            middle = "";
+            maxWeight = 0;
+            first = words[i];
+            second = words[i + 1];
+            
+            for (Map.Entry<String, Integer> middleVertex : graph.targets(first.toLowerCase()).entrySet()) {
+                for (Map.Entry<String, Integer> endVertex : graph.targets(middleVertex.getKey()).entrySet()) {
+                    if (endVertex.getKey().equals(second.toLowerCase())) {
+                        if (middleVertex.getValue() + endVertex.getValue() > maxWeight) {
+                            middle = middleVertex.getKey();
+                            maxWeight = middleVertex.getValue() + endVertex.getValue();
+                        }
+                    }
+                }
+            }
+            if (middle.isEmpty()) {
+                builder.append(" ").append(second);
+            } else {
+                builder.append(" ").append(middle).append(" ").append(second);
+            }
+        }
+        return builder.toString();
+    }
+    
+    /**
+     * Size of the graph
+     * @return the number of vertices (i.e words) in the corpus
+     */
+    public int size() {
+        return graph.vertices().size();
     }
     
     // TODO toString()
