@@ -3,6 +3,9 @@
  */
 package expressivo;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -85,4 +88,22 @@ public interface Expression {
      */
     public Expression differentiate(String variable);
     
+    /**
+     * @param mapping variables to values
+     * 
+     * @return a simplification of the Expression
+     * should be reduced to a single number if no variables remaining
+     */
+    public Expression simplify(Map<String, Double> environment);
+    
+    /**
+     * @return a set of all the variables used in the current expression
+     */
+    public Set<String> variables();
+    
+    /**
+     * @require variables to return an empty set
+     * @return reduced expression to a single integer
+     */
+    public int reduce();
 }

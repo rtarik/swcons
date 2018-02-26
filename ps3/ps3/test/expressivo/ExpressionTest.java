@@ -5,6 +5,10 @@ package expressivo;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.Test;
 
 /**
@@ -24,6 +28,13 @@ public class ExpressionTest {
     //    differentiate(String variable):
     //      Product, Sum, Primitive
     //      variable in the expression, variable not in the expression
+    //    variables():
+    //      returns empty set, non empty set
+    //    reduce():
+    //      product, sum, mixed
+    //    simplify(Map<String, Double> environment):
+    //      all variables in the expression are in the environment,
+    //      some variables in the expression are missing
     
     @Test
     public void testParseValidInput() {
@@ -143,6 +154,74 @@ public class ExpressionTest {
                 ));
         assertTrue("expected differentiated expression", x.differentiate("y").equals(
                 Expression.parse("0")
+                ));
+    }
+    
+    @Test
+    public void testVariablesEmptySet() {
+        Expression expression = Expression.parse("5 * 4 * 3");
+        assertTrue("expected empty set", expression.variables().isEmpty());
+    }
+    
+    @Test
+    public void testVariablesNonEmptySet() {
+        Expression expression = Expression.parse("x + y");
+        Set<String> variables = expression.variables();
+        assertTrue("expected set to contain x", variables.contains("x"));
+        assertTrue("expected set to contain y", variables.contains("y"));
+    }
+    
+    @Test
+    public void testReduceProduct() {
+        Expression expression = Expression.parse("3 * 4");
+        assertEquals("Reduced form is 12", 12, expression.reduce());
+    }
+    
+    @Test
+    public void testReduceSum() {
+        Expression expression = Expression.parse("3 + 4");
+        assertEquals("Reduced form is 7", 7, expression.reduce());
+    }
+    
+    @Test
+    public void testReduceMixed() {
+        Expression expression = Expression.parse("3 * (2 + 4)");
+        assertEquals("Reduced form is 18", 18, expression.reduce());
+    }
+    
+    // Covers all the expression variables are in the environment
+    @Test
+    public void testSimplifyToNumber() {
+        Expression expression = Expression.parse("x * x");
+        Map<String, Double> environment = new HashMap<>();
+        environment.put("x",  1.0);
+        assertTrue("expected expression to simplify to 1", Expression.parse("1").equals(
+                expression.simplify(environment)
+                ));
+    }
+    
+    @Test
+    public void testSimplifySimplestExpression() {
+        Expression x = Expression.parse("x");
+        Map<String, Double> xEnv = new HashMap<>();
+        Map<String, Double> yEnv = new HashMap<>();
+        xEnv.put("x",  1.0);
+        yEnv.put("y",  1.0);
+        assertTrue("expected expression to simplify to 1", x.simplify(xEnv).equals(
+                Expression.parse("1")
+                ));
+        assertTrue("expected expression not to change", x.simplify(yEnv).equals(
+                Expression.parse("x")
+                ));
+    }
+    
+    @Test
+    public void testSimplifyRemainingVariables() {
+        Expression expression = Expression.parse("x * y");
+        Map<String, Double> environment = new HashMap<>();
+        environment.put("x",  1.0);
+        assertTrue("expected expression to simplify to 1*y", Expression.parse("1*y").equals(
+                expression.simplify(environment)
                 ));
     }
     

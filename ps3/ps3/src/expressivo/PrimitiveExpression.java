@@ -1,5 +1,9 @@
 package expressivo;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /** Represents expressions of primitive type such as variables and numbers **/
 public class PrimitiveExpression implements Expression {
     private String x;
@@ -34,6 +38,31 @@ public class PrimitiveExpression implements Expression {
         } else {
             return new PrimitiveExpression("0");
         }
+    }
+
+    @Override
+    public Expression simplify(Map<String, Double> environment) {
+        if (environment.containsKey(x)) {
+            return new PrimitiveExpression(
+                    String.valueOf(environment.get(x).intValue())
+                    );
+        } else {
+            return this;
+        }
+    }
+
+    @Override
+    public Set<String> variables() {
+        Set<String> vars = new HashSet<>();
+        if (x.matches("[a-zA-Z]+")) {
+            vars.add(x);
+        }
+        return vars;
+    }
+
+    @Override
+    public int reduce() {
+        return Integer.parseInt(x);
     }
     
     
