@@ -13,7 +13,7 @@ import org.junit.Test;
 public class CommandsTest {
 
     // Testing strategy
-    //   TODO
+    //   differentiate(String expression, String variable)
     
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
@@ -21,6 +21,10 @@ public class CommandsTest {
     }
     
     
-    // TODO tests for Commands.differentiate() and Commands.simplify()
+    @Test
+    public void testDifferentiate() {
+        assertTrue("Expected differentiated expression",
+                Commands.differentiate("x*y", "x").equals("((1)*(y))+((x)*(0))"));
+    }
     
 }

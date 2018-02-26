@@ -21,6 +21,9 @@ public class ExpressionTest {
     //      One variable expression, variables order, grouping
     //    hashCode():
     //      same as equals()
+    //    differentiate(String variable):
+    //      Product, Sum, Primitive
+    //      variable in the expression, variable not in the expression
     
     @Test
     public void testParseValidInput() {
@@ -114,6 +117,33 @@ public class ExpressionTest {
         Expression XYZ2 = Expression.parse("X*Y+Z");
         assertTrue("Expected hashCodes to be equal", XPlusOne1.hashCode() == XPlusOne2.hashCode());
         assertFalse("Expected hashCodes to be different", XYZ1.hashCode() == XYZ2.hashCode());
+    }
+    
+    @Test
+    public void testDifferentiateProductVarIn() {
+        Expression xy = Expression.parse("x*y");
+        assertTrue("expected differentiated expression", xy.differentiate("x").equals(
+                Expression.parse("1*y + x*0")
+                ));
+    }
+    
+    @Test
+    public void testDifferentiateSumVarNotIn() {
+        Expression xy = Expression.parse("x+y");
+        assertTrue("expected differentiated expression", xy.differentiate("z").equals(
+                Expression.parse("0+0")
+                ));
+    }
+    
+    @Test
+    public void testDifferentiatePrimitive() {
+        Expression x = Expression.parse("x");
+        assertTrue("expected differentiated expression", x.differentiate("x").equals(
+                Expression.parse("1")
+                ));
+        assertTrue("expected differentiated expression", x.differentiate("y").equals(
+                Expression.parse("0")
+                ));
     }
     
 }

@@ -31,6 +31,14 @@ public class ProductExpression implements Expression {
     public String toString() {
         return "(" + a.toString() + ")*(" + b.toString() + ")";
     }
+
+    @Override
+    public Expression differentiate(String variable) {
+        return new SumExpression(
+                new ProductExpression(a.differentiate(variable), b),
+                new ProductExpression(a, b.differentiate(variable))
+                );
+    }
     
     
 }

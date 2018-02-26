@@ -26,6 +26,15 @@ public class PrimitiveExpression implements Expression {
     public String toString() {
         return x;
     }
+
+    @Override
+    public Expression differentiate(String variable) {
+        if (x.equals(variable)) {
+            return new PrimitiveExpression("1");
+        } else {
+            return new PrimitiveExpression("0");
+        }
+    }
     
     
 }

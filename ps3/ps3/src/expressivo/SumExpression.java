@@ -30,6 +30,11 @@ public class SumExpression implements Expression {
     public String toString() {
         return "(" + a.toString() + ")+(" + b.toString() + ")";
     }
+
+    @Override
+    public Expression differentiate(String variable) {
+        return new SumExpression(a.differentiate(variable), b.differentiate(variable));
+    }
     
     
 }

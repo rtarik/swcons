@@ -77,6 +77,12 @@ public interface Expression {
     @Override
     public int hashCode();
     
-    // TODO more instance methods
+    /**
+     * @param variable name on which we differentiate
+     * 
+     * @return Expression that's the result of
+     * differentiating the current Expression
+     */
+    public Expression differentiate(String variable);
     
 }
