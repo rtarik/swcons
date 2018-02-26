@@ -11,7 +11,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import expressivo.parser.ExpressionLexer;
-import expressivo.parser.ExpressionListener;
 import expressivo.parser.ExpressionParser;
 
 /**
@@ -51,6 +50,11 @@ public interface Expression {
     }
     
     /**
+     * Make a parsable String representation of the expression, with
+     * a few rules according to the type of the expression:
+     * For all expressions, get rid of all extra space
+     * For product and sum expressions, wrap both terms in parentheses
+     * For primitive expressions, don't use parentheses
      * @return a parsable representation of this expression, such that
      * for all e:Expression, e.equals(Expression.parse(e.toString())).
      */

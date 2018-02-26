@@ -8,4 +8,24 @@ public class PrimitiveExpression implements Expression {
     public PrimitiveExpression(String value) {
         x = value;
     }
+
+    @Override
+    public int hashCode() {
+        return x.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+        if (!(that instanceof PrimitiveExpression)) {
+            return false;
+        }
+        return ((PrimitiveExpression) that).x.equals(x);
+    }
+
+    @Override
+    public String toString() {
+        return x;
+    }
+    
+    
 }

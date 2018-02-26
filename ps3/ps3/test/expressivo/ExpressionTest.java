@@ -44,8 +44,8 @@ public class ExpressionTest {
     
     @Test
     public void testToStringOperationsOrder() {
-        Expression expression = Expression.parse("(x)*(y+z)");
-        assertEquals("Expected x*(y+z)", "x*(y+z)", expression.toString());
+        Expression expression = Expression.parse("x*(y+z)");
+        assertEquals("Expected (x)*((y)+(z))", "(x)*((y)+(z))", expression.toString());
     }
     
     @Test
@@ -72,8 +72,20 @@ public class ExpressionTest {
         Expression XPlusOne2 = Expression.parse("(X) + (1)");
         Expression XYZ1 = Expression.parse("X*(Y+Z)");
         Expression XYZ2 = Expression.parse("X*Y+Z");
+        Expression XYZ3 = Expression.parse("X+Y+Z");
+        Expression XYZ4 = Expression.parse("(X+Y)+Z");
+        Expression XYZ5 = Expression.parse("X+(Y+Z)");
         assertTrue("Expected expressions to be equal", XPlusOne1.equals(XPlusOne2));
         assertFalse("Expected expressions to be different", XYZ1.equals(XYZ2));
+        assertTrue("Expected expressions to be equal", XYZ3.equals(XYZ4));
+        assertFalse("Expected expressions to be different", XYZ4.equals(XYZ5));
+    }
+    
+    @Test
+    public void testEqualsParseToString() {
+        Expression expr = Expression.parse("x+(y+z)");
+        assertTrue("Expected parsed toString to reproduce the expression",
+                expr.equals(Expression.parse(expr.toString())));
     }
     
     @Test

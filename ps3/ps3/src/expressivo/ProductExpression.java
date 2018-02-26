@@ -1,5 +1,7 @@
 package expressivo;
 
+import java.util.Objects;
+
 /** Expression of type product **/
 public class ProductExpression implements Expression {
     private Expression a;
@@ -10,4 +12,25 @@ public class ProductExpression implements Expression {
         this.a = a;
         this.b = b;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(a, b);
+    }
+
+    @Override
+    public boolean equals(Object that) {
+        if (!(that instanceof ProductExpression)) {
+            return false;
+        }
+        return ((ProductExpression) that).a.equals(a) &&
+                ((ProductExpression) that).b.equals(b);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + a.toString() + ")*(" + b.toString() + ")";
+    }
+    
+    
 }
