@@ -27,12 +27,17 @@ public class Board {
 	
 	public Board(int sizeX, int sizeY) {
 		board = new SquareState[sizeX][sizeY];
+		bombsMap = new HashMap<>();
 		for (int i=0; i < sizeX; i++) {
 			for (int j=0; j < sizeY; j++) {
 				board[i][j] = SquareState.UNTOUCHED;
+				if (Math.random() < 0.25) {
+					bombsMap.put(sizeX + "," + sizeY, true);
+				} else {
+					bombsMap.put(sizeX + "," + sizeY, false);
+				}
 			}
 		}
-		bombsMap = new HashMap<>();
 	}
 	
 	public enum SquareState {
@@ -85,6 +90,16 @@ public class Board {
 	 */
 	public SquareState getSquareState(int x, int y) {
 		return board[x][y];
+	}
+	
+	/**
+	 * 
+	 * @param x x coordinate of the square, requires 0 <= x < sizeX
+	 * @param y y coordinate of the square, requires 0 <= y < sizeY
+	 * @return true if there's a bomb at square x,y otherwise returns false
+	 */
+	public boolean containsBombAt(int x, int y) {
+		return bombsMap.get(x + "," + y);
 	}
     
 }
