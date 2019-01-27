@@ -32,9 +32,9 @@ public class Board {
 			for (int j=0; j < sizeY; j++) {
 				board[i][j] = SquareState.UNTOUCHED;
 				if (Math.random() < 0.25) {
-					bombsMap.put(sizeX + "," + sizeY, true);
+					bombsMap.put(i + "," + j, true);
 				} else {
-					bombsMap.put(sizeX + "," + sizeY, false);
+					bombsMap.put(i + "," + j, false);
 				}
 			}
 		}
@@ -44,12 +44,45 @@ public class Board {
 		UNTOUCHED, DUG, FLAGGED
 	}
 	
+	private int countNearbyBombs(int x, int y) {
+		int count = 0;
+		int[][] steps = {{0, 1}, {0, -1}, {1, -1}, {1, 0}, {1, 1}, {-1, -1}, {-1, 0}, {-1, 1}};
+		for (int[] step : steps) {
+			int nx = x + step[0];
+			int ny = y + step[1];
+			if (withinBounds(nx, ny)) {
+				if (containsBombAt(nx, ny)) {
+					count += 1;
+				}
+			}
+		}
+		return count;
+	}
+	
 	/**
 	 * Convert a minesweeper board to a String representation
 	 * @return String representation of the board
 	 */
 	public String look() {
-		return null;
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				if (getSquareState(i, j) == SquareState.UNTOUCHED) {
+					sb.append("-");
+				} else if (getSquareState(i, j) == SquareState.FLAGGED) {
+					sb.append("F");
+				} else { // Square is DUG
+					int nearbyBombsCount = countNearbyBombs(i, j);
+					if (nearbyBombsCount > 0) {
+						sb.append(nearbyBombsCount);
+					} else {
+						sb.append(" ");
+					}
+				}
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 	
 	/**
@@ -57,7 +90,7 @@ public class Board {
 	 * @param x x coordinate of the square, requires 0 <= x < sizeX
 	 * @param y y coordinate of the square, requires 0 <= y < sizeY
 	 */
-	public void dig(int x, int y) {
+	public synchronized void dig(int x, int y) {
 		board[x][y] = SquareState.DUG;
 	}
 	
@@ -66,7 +99,7 @@ public class Board {
 	 * @param x x coordinate of the square, requires 0 <= x < sizeX
 	 * @param y y coordinate of the square, requires 0 <= y < sizeY
 	 */
-	public void flag(int x, int y) {
+	public synchronized void flag(int x, int y) {
 		if (board[x][y] == SquareState.UNTOUCHED) {
 			board[x][y] = SquareState.FLAGGED;
 		}
@@ -77,7 +110,7 @@ public class Board {
 	 * @param x x coordinate of the square, requires 0 <= x < sizeX
 	 * @param y y coordinate of the square, requires 0 <= y < sizeY
 	 */
-	public void deflag(int x, int y) {
+	public synchronized void deflag(int x, int y) {
 		if (board[x][y] == SquareState.FLAGGED) {
 			board[x][y] = SquareState.UNTOUCHED;
 		}
@@ -100,6 +133,16 @@ public class Board {
 	 */
 	public boolean containsBombAt(int x, int y) {
 		return bombsMap.get(x + "," + y);
+	}
+	
+	/**
+	 * 
+	 * @param x x coordinate of the square
+	 * @param y y coordinate of the square
+	 * @return true if x,y are valid coordinates for this board otherwise returns false
+	 */
+	public boolean withinBounds(int x, int y) {
+		return 0 <= x && x < board.length && 0 <= y && y < board[0].length;
 	}
     
 }

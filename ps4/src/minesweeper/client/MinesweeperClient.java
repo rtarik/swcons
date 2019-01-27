@@ -6,14 +6,18 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import minesweeper.Board;
+
 public class MinesweeperClient {
 	
 	private static final int DEFAULT_PORT = 4444;
 	
 	private Socket socket;
+	private Board board;
 	
-	public MinesweeperClient(Socket socket) {
+	public MinesweeperClient(Socket socket, Board board) {
 		this.socket = socket;
+		this.board = board;
 	}
 	
 	public void connect() throws IOException {
@@ -61,33 +65,55 @@ public class MinesweeperClient {
                      + "(dig -?\\d+ -?\\d+)|(flag -?\\d+ -?\\d+)|(deflag -?\\d+ -?\\d+)";
         if ( ! input.matches(regex)) {
             // invalid input
-            // TODO Problem 5
+            return "Input should be of the form: look|bye|dig x y|flag x y|deflag x y\n";
         }
         String[] tokens = input.split(" ");
         if (tokens[0].equals("look")) {
             // 'look' request
-            // TODO Problem 5
+            return board.look()+"\n";
         } else if (tokens[0].equals("help")) {
             // 'help' request
-            // TODO Problem 5
+            return "Valid commands are: look|bye|dig x y|flag x y|deflag x y\n";
         } else if (tokens[0].equals("bye")) {
             // 'bye' request
-            // TODO Problem 5
+        	try {
+        		socket.close();
+        	} catch (IOException ioe) {
+        		ioe.printStackTrace();
+        		throw new UnsupportedOperationException();
+        	}
+            return "bye\n";
         } else {
             int x = Integer.parseInt(tokens[1]);
             int y = Integer.parseInt(tokens[2]);
+            if (! board.withinBounds(x, y)) {
+            	return "Invalid coordinates!\n";
+            }
             if (tokens[0].equals("dig")) {
                 // 'dig x y' request
-                // TODO Problem 5
+            	if (board.containsBombAt(x, y)) {
+            		try {
+                		socket.close();
+                	} catch (IOException ioe) {
+                		ioe.printStackTrace();
+                		throw new UnsupportedOperationException();
+                	}
+            		return "BOOM!\n";
+            	} else {
+            		board.dig(x, y);
+            		return board.look() + "\n";
+            	}
+                
             } else if (tokens[0].equals("flag")) {
                 // 'flag x y' request
-                // TODO Problem 5
+                board.flag(x, y);
+                return board.look() + "\n";
             } else if (tokens[0].equals("deflag")) {
                 // 'deflag x y' request
-                // TODO Problem 5
+                board.deflag(x, y);
+                return board.look() + "\n";
             }
         }
-        // TODO: Should never get here, make sure to return in each of the cases above
         throw new UnsupportedOperationException();
     }
 }

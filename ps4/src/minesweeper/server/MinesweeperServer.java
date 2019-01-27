@@ -14,6 +14,8 @@ import minesweeper.client.MinesweeperClient;
  * Multiplayer Minesweeper server.
  */
 public class MinesweeperServer {
+	
+	private Board board;
 
     // System thread safety argument
     //   TODO Problem 5
@@ -39,9 +41,10 @@ public class MinesweeperServer {
      * @param debug debug mode flag
      * @throws IOException if an error occurs opening the server socket
      */
-    public MinesweeperServer(int port, boolean debug) throws IOException {
+    public MinesweeperServer(int port, boolean debug, Board board) throws IOException {
         serverSocket = new ServerSocket(port);
         this.debug = debug;
+        this.board = board;
     }
 
     /**
@@ -62,7 +65,7 @@ public class MinesweeperServer {
 				@Override
 				public void run() {
 					try {
-						new MinesweeperClient(socket).connect();
+						new MinesweeperClient(socket, board).connect();
 					} catch (IOException e) { // Closing client connection failed
 						e.printStackTrace();
 					}
@@ -189,8 +192,8 @@ public class MinesweeperServer {
     public static void runMinesweeperServer(boolean debug, Optional<File> file, int sizeX, int sizeY, int port) throws IOException {
         
         // TODO: Continue implementation here in problem 4
-        
-        MinesweeperServer server = new MinesweeperServer(port, debug);
+        Board board = new Board(sizeX, sizeY);
+        MinesweeperServer server = new MinesweeperServer(port, debug, board);
         server.serve();
     }
 }
