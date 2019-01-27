@@ -27,16 +27,29 @@ public class BoardTest {
     }
     
     @Test
-    public void testFlag() {
+    public void testFlagNotDug() {
+    	assert(board.getSquareState(1, 0) == SquareState.UNTOUCHED);
     	board.flag(1, 0);
-    	assert(board.getSquareState(0, 0) == SquareState.FLAGGED);
+    	assert(board.getSquareState(1, 0) == SquareState.FLAGGED);
     }
     
     @Test
-    public void testDeflag() {
-    	board.deflag(1, 0);
-    	assert(board.getSquareState(0, 0) == SquareState.UNTOUCHED);
+    public void testFlagDug() {
+    	board.dig(1, 0);
+    	board.flag(1,  0);
+    	assert(board.getSquareState(1, 0) == SquareState.DUG);
     }
     
+    @Test
+    public void testDeflagNotDug() {
+    	board.deflag(0, 1);
+    	assert(board.getSquareState(0, 1) == SquareState.UNTOUCHED);
+    }
     
+    @Test
+    public void testDeflagDug() {
+    	board.dig(0, 1);
+    	board.deflag(0, 1);
+    	assert(board.getSquareState(0, 1) == SquareState.DUG);
+    }
 }

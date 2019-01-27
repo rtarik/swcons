@@ -3,6 +3,9 @@
  */
 package minesweeper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * TODO: Specification
  */
@@ -10,21 +13,26 @@ public class Board {
     
 	// Abstraction function:
 	//	represents a sizeX by sizeY Minesweeper board
+	//	initially all squares are untouched
+	
 	// Rep invariant:
-	// 	TODO
+	// 	None
 	// Safety from rep exposure:
-	//	TODO
+	// only mutable members are board and bombsMap and both are never exposed
 	// Thread Safety:
 	//	TODO
-    
-    // TODO: Specify, test, and implement in problem 2
 	
-	private int sizeX;
-	private int sizeY;
+	private SquareState[][] board;
+	private Map<String, Boolean> bombsMap;
 	
 	public Board(int sizeX, int sizeY) {
-		this.sizeX = sizeX;
-		this.sizeY = sizeY;
+		board = new SquareState[sizeX][sizeY];
+		for (int i=0; i < sizeX; i++) {
+			for (int j=0; j < sizeY; j++) {
+				board[i][j] = SquareState.UNTOUCHED;
+			}
+		}
+		bombsMap = new HashMap<>();
 	}
 	
 	public enum SquareState {
@@ -45,25 +53,29 @@ public class Board {
 	 * @param y y coordinate of the square, requires 0 <= y < sizeY
 	 */
 	public void dig(int x, int y) {
-		
+		board[x][y] = SquareState.DUG;
 	}
 	
 	/**
-	 * Flag square (x, y)
+	 * Set square (x, y) to FLAGGED if it's UNTOUCHED otherwise no effect
 	 * @param x x coordinate of the square, requires 0 <= x < sizeX
 	 * @param y y coordinate of the square, requires 0 <= y < sizeY
 	 */
 	public void flag(int x, int y) {
-		
+		if (board[x][y] == SquareState.UNTOUCHED) {
+			board[x][y] = SquareState.FLAGGED;
+		}
 	}
 	
 	/**
-	 * Deflag square (x, y)
+	 * Set square (x, y) to UNTOUCHED if it's FLAGGED otherwise no effect
 	 * @param x x coordinate of the square, requires 0 <= x < sizeX
 	 * @param y y coordinate of the square, requires 0 <= y < sizeY
 	 */
 	public void deflag(int x, int y) {
-		
+		if (board[x][y] == SquareState.FLAGGED) {
+			board[x][y] = SquareState.UNTOUCHED;
+		}
 	}
 	
 	/**
@@ -72,7 +84,7 @@ public class Board {
 	 * @param y y coordinate of the square, requires 0 <= y < sizeY
 	 */
 	public SquareState getSquareState(int x, int y) {
-		return SquareState.UNTOUCHED;
+		return board[x][y];
 	}
     
 }
